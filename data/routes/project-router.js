@@ -4,10 +4,11 @@ const pjDb = require('../helpers/projectModel');
 
 const router = express.Router();
 
+// Get all projects
 router.get('/', (req, res) => {
   pjDb.get()
-    .then(project => {
-      res.status(200).json(project);
+    .then(projects => {
+      res.status(200).json(projects);
     })
     .catch(error => {
       res.status(500).json({
@@ -17,10 +18,30 @@ router.get('/', (req, res) => {
     });
 });
 
+// Get single project
 router.get('/:id', validateProjectId, (req, res) => {
   res.status(200).json(req.project)
 });
 
+// Retrieve list of actions that belong a project
+router.get('/:id/actions', validateProjectId, (req, res) => {
+  const { id } = req.params;
+  // /api/projects/:id - returns project object = req.project
+  // req.project.actions = []
+
+  pjDb.getProjectActions(id)
+    .then(actions => {
+      res.status(200).json(actions);
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error.message,
+        stack: error.stack
+      });
+    });
+})
+
+// Create a new project
 router.post('/', validateProject, (req, res) => {
   const newProject = req.body;
 
@@ -36,6 +57,7 @@ router.post('/', validateProject, (req, res) => {
     });
 });
 
+// Modify a project
 router.put('/:id', validateProjectId, validateProject, (req, res) => {
   const { id } = req.params;
   const updatedContent = req.body;
@@ -53,6 +75,7 @@ router.put('/:id', validateProjectId, validateProject, (req, res) => {
     })
 });
 
+// Delete a project
 router.delete('/:id', validateProjectId, (req, res) => {
   const { id } = req.params;
   pjDb.remove(id)
@@ -79,7 +102,7 @@ async function validateProjectId(req, res, next) {
     req.project = project;
     next();
   } else { // Else 400
-    res.status(400).json({ message: "Project with Id doesn't exist!"});
+    res.status(404).json({ message: "Project with Id doesn't exist!"});
   }
 }
 
