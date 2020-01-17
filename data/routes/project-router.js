@@ -21,8 +21,19 @@ router.get('/:id', validateProjectId, (req, res) => {
   res.status(200).json(req.project)
 });
 
-router.post('/', (req, res) => {
-  res.status(200).json({ message: "Projects are live!" })
+router.post('/', validateProject, (req, res) => {
+  const newProject = req.body;
+
+  pjDb.insert(newProject)
+    .then(project => {
+      res.status(201).json(project)
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: "The project couldn't be added to the database",
+        stack: error.stack
+      })
+    });
 });
 
 router.put('/:id', (req, res) => {
@@ -44,6 +55,18 @@ async function validateProjectId(req, res, next) {
     next();
   } else { // Else 400
     res.status(400).json({ message: "Project with Id doesn't exist!"});
+  }
+}
+
+function validateProject(req, res, next) {
+  const projectToPost = req.body;
+
+  if(Object.keys(projectToPost).length === 0){
+    res.status(400).json({ message: "Missing project data!" });
+  } else if(!projectToPost.name || !projectToPost.description){
+    res.status(400).json({ message: "Please enter a name or a description!" });
+  } else {
+    next();
   }
 }
 
