@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', validateActionId, (req, res) => {
-
+  res.status(200).json(req.action);
 });
 
 router.post('/:id', (req, res) => {
@@ -40,7 +40,7 @@ async function validateActionId(req, res, next) {
 
   // Use get(id)
   const action = await acDb.get(id);
-  // Does project with Id exist? No - Return 400, Yes - save to req.project
+  // Does action with Id exist? No - Return 400, Yes - save to req.action
   if (action) {
     req.action = action;
     next();
