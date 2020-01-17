@@ -36,8 +36,21 @@ router.post('/', validateProject, (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
-  res.status(200).json({ message: "Projects are live!" })
+router.put('/:id', validateProjectId, validateProject, (req, res) => {
+  const { id } = req.params;
+  const updatedContent = req.body;
+
+  // update(projectId, updatedContent)
+  pjDb.update(id, updatedContent)
+    .then(updated => {
+      res.status(201).json(updated);
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error.message,
+        stack: error.stack
+      })
+    })
 });
 
 router.delete('/', (req, res) => {
