@@ -3,8 +3,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 // Import Routers
-const projectRouter = require('./data/routes/project-router');
-const actionRouter = require('./data/routes/action-router');
+const projectRouter = require('./routes/project-router');
+const actionRouter = require('./routes/action-router');
 
 const app = express();
 
