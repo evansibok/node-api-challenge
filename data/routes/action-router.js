@@ -23,15 +23,6 @@ router.get('/:id', validateActionId, (req, res) => {
   res.status(200).json(req.action);
 });
 
-// Add an action
-router.post('/:id', (req, res) => {
-  // ProjectId
-  // Description
-  // Notes
-
-
-});
-
 // Modify an action
 router.put('/:id', validateActionId, validateAction, (req, res) => {
   const id = req.action.id;
@@ -87,7 +78,7 @@ function validateAction(req, res, next) {
   if (Object.keys(actionToPost).length === 0) {
     res.status(400).json({ message: "Missing action data!" });
   } else if (!actionToPost.description || !actionToPost.notes) {
-    res.status(400).json({ message: "Please enter a name or a description!" });
+    res.status(400).json({ message: "Please enter notes or a description!" });
   } else {
     next();
   }

@@ -1,6 +1,7 @@
 const express = require('express');
 
 const pjDb = require('../helpers/projectModel');
+const acDb = require('../helpers/actionModel');
 
 const router = express.Router();
 
@@ -46,12 +47,31 @@ router.post('/', validateProject, (req, res) => {
   const newProject = req.body;
 
   pjDb.insert(newProject)
-    .then(project => {
-      res.status(201).json(project)
+      .then(project => {
+        res.status(201).json(project)
+      })
+      .catch(error => {
+        res.status(500).json({
+          errorMessage: "The project couldn't be added to the database",
+          stack: error.stack
+        })
+      });
+});
+
+// Add Actions to a project
+router.post('/:id/actions', validateProjectId, validateAction, (req, res) => {
+  // do your magic!
+  const projectId = req.project.id;
+  const newAction = req.body;
+
+  const actionData = { ...newAction, project_id: projectId };
+  acDb.insert(actionData)
+    .then(action => {
+      res.status(201).json(action)
     })
     .catch(error => {
       res.status(500).json({
-        errorMessage: "The project couldn't be added to the database",
+        errorMessage: "The action couldn't be added to the database",
         stack: error.stack
       })
     });
@@ -59,7 +79,7 @@ router.post('/', validateProject, (req, res) => {
 
 // Modify a project
 router.put('/:id', validateProjectId, validateProject, (req, res) => {
-  const { id } = req.params;
+  const id = req.project.id;
   const updatedContent = req.body;
 
   // update(projectId, updatedContent)
@@ -77,7 +97,7 @@ router.put('/:id', validateProjectId, validateProject, (req, res) => {
 
 // Delete a project
 router.delete('/:id', validateProjectId, (req, res) => {
-  const id = req.action.id;
+  const id = req.project.id;
 
   pjDb.remove(id)
     .then(() => {
@@ -114,6 +134,18 @@ function validateProject(req, res, next) {
     res.status(400).json({ message: "Missing project data!" });
   } else if(!projectToPost.name || !projectToPost.description){
     res.status(400).json({ message: "Please enter a name or a description!" });
+  } else {
+    next();
+  }
+}
+
+function validateAction(req, res, next) {
+  const actionToPost = req.body;
+
+  if (Object.keys(actionToPost).length === 0) {
+    res.status(400).json({ message: "Missing action data!" });
+  } else if (!actionToPost.description || !actionToPost.notes) {
+    res.status(400).json({ message: "Please enter notes or a description!" });
   } else {
     next();
   }
