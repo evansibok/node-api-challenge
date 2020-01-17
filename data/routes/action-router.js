@@ -4,6 +4,7 @@ const acDb = require('../helpers/actionModel');
 
 const router = express.Router();
 
+// Get a list of all actions
 router.get('/', (req, res) => {
   acDb.get()
     .then(actions => {
@@ -17,10 +18,12 @@ router.get('/', (req, res) => {
     });
 });
 
+// Get a single action
 router.get('/:id', validateActionId, (req, res) => {
   res.status(200).json(req.action);
 });
 
+// Add an action
 router.post('/:id', (req, res) => {
   // ProjectId
   // Description
@@ -29,6 +32,7 @@ router.post('/:id', (req, res) => {
 
 });
 
+// Modify an action
 router.put('/:id', validateActionId, validateAction, (req, res) => {
   const id = req.action.id;
   const updatedAction = req.body;
@@ -45,8 +49,22 @@ router.put('/:id', validateActionId, validateAction, (req, res) => {
     })
 });
 
-router.delete('/', (req, res) => {
-  
+// Delete an action
+router.delete('/:id', validateActionId, (req, res) => {
+  const id = req.action.id;
+
+  acDb.remove(id)
+    .then(() => {
+      res.status(202).json({
+        message: "Action deleted!"
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error.message,
+        stack: error.stack
+      })
+    });
 });
 
 async function validateActionId(req, res, next) {

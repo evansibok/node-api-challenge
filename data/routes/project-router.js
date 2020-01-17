@@ -23,7 +23,7 @@ router.get('/:id', validateProjectId, (req, res) => {
   res.status(200).json(req.project)
 });
 
-// Retrieve list of actions that belong a project
+// Retrieve list of all actions that belong a single project
 router.get('/:id/actions', validateProjectId, (req, res) => {
   const { id } = req.params;
   // /api/projects/:id - returns project object = req.project
@@ -77,9 +77,10 @@ router.put('/:id', validateProjectId, validateProject, (req, res) => {
 
 // Delete a project
 router.delete('/:id', validateProjectId, (req, res) => {
-  const { id } = req.params;
+  const id = req.action.id;
+
   pjDb.remove(id)
-    .then(removedProject => {
+    .then(() => {
       res.status(202).json({
         message: "Project deleted!"
       });
