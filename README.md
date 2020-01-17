@@ -39,14 +39,20 @@ Commit your code regularly and use descriptive messages. This helps both you (in
 Demonstrate your understanding of this Sprint's concepts by answering the following free-form questions. Edit this document to include your answers after each question. Make sure to leave a blank line above and below your answer so it is clear and easy to read by your Team Lead.
 
 - [ ] Mention two parts of Express that you learned about this week.
+  - 1. Handlers for handling HTTP requests using routes
+  - 2. Middlewares to share logic with handlers
 
 - [ ] Describe Middleware?
+ - Middleware refers to a function that cuts out complex logic and handles most of the request and response cycles of our routes. It connects logic with as many routes that need it.
 
 - [ ] Describe a Resource?
+  - A resource is whatever data that is being accessed by our URL endpoint.
 
 - [ ] What can the API return to help clients know if a request was successful?
+  - An API returns a response with a header and sometimes a body.
 
 - [ ] How can we partition our application into sub-applications?
+  - We can do this by having separate folders within our app architecture that represents each sub-applications.
 
 ## Minimum Viable Product
 
