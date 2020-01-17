@@ -8,6 +8,7 @@ const actionRouter = require('./routes/action-router');
 
 const app = express();
 
+app.use(express.static('client/build'));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
