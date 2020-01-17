@@ -25,10 +25,24 @@ router.post('/:id', (req, res) => {
   // ProjectId
   // Description
   // Notes
+
+
 });
 
-router.put('/', (req, res) => {
-  
+router.put('/:id', validateActionId, validateAction, (req, res) => {
+  const id = req.action.id;
+  const updatedAction = req.body;
+
+  acDb.update(id, updatedAction)
+    .then(updated => {
+      res.status(201).json(updated);
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error.message,
+        stack: error.stack
+      })
+    })
 });
 
 router.delete('/', (req, res) => {
@@ -46,6 +60,18 @@ async function validateActionId(req, res, next) {
     next();
   } else { // Else 400
     res.status(404).json({ message: "Action with Id doesn't exist!" });
+  }
+}
+
+function validateAction(req, res, next) {
+  const actionToPost = req.body;
+
+  if (Object.keys(actionToPost).length === 0) {
+    res.status(400).json({ message: "Missing action data!" });
+  } else if (!actionToPost.description || !actionToPost.notes) {
+    res.status(400).json({ message: "Please enter a name or a description!" });
+  } else {
+    next();
   }
 }
 
