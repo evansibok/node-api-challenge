@@ -53,8 +53,20 @@ router.put('/:id', validateProjectId, validateProject, (req, res) => {
     })
 });
 
-router.delete('/', (req, res) => {
-  res.status(200).json({ message: "Projects are live!" })
+router.delete('/:id', validateProjectId, (req, res) => {
+  const { id } = req.params;
+  pjDb.remove(id)
+    .then(removedProject => {
+      res.status(202).json({
+        message: "Project deleted!"
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error.message,
+        stack: error.stack
+      })
+    });
 });
 
 async function validateProjectId(req, res, next) {
