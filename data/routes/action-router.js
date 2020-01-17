@@ -17,12 +17,14 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateActionId, (req, res) => {
 
 });
 
-router.post('/:id/actions', (req, res) => {
-
+router.post('/:id', (req, res) => {
+  // ProjectId
+  // Description
+  // Notes
 });
 
 router.put('/', (req, res) => {
@@ -32,5 +34,19 @@ router.put('/', (req, res) => {
 router.delete('/', (req, res) => {
   
 });
+
+async function validateActionId(req, res, next) {
+  const { id } = req.params;
+
+  // Use get(id)
+  const action = await acDb.get(id);
+  // Does project with Id exist? No - Return 400, Yes - save to req.project
+  if (action) {
+    req.action = action;
+    next();
+  } else { // Else 400
+    res.status(404).json({ message: "Action with Id doesn't exist!" });
+  }
+}
 
 module.exports = router;
